@@ -1,60 +1,135 @@
-import './style.css'
-import typescriptLogo from './assets/typescript.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import { setupCounter } from './counter.ts'
+import "./style.css";
+// cspell:disable-next-line
+// Import fluent UI web components
+import "@fluentui/web-components/button.js";
+import {
+  FluentDesignSystem,
+  setTheme,
+  TextDefinition,
+  ButtonDefinition,
+  BadgeDefinition,
+  TextInputDefinition,
+} from "@fluentui/web-components";
+import { webLightTheme } from "@fluentui/tokens";
+setTheme(webLightTheme);
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-<section id="center">
-  <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${typescriptLogo}" class="framework" alt="TypeScript logo"/>
-    <img src="${viteLogo}" class="vite" alt="Vite logo" />
-  </div>
-  <div>
-    <h1>Get started</h1>
-    <p>Edit <code>src/main.ts</code> and save to test <code>HMR</code></p>
-  </div>
-  <button id="counter" type="button" class="counter"></button>
-</section>
+import { Button, Badge, TextInput, Text } from "@fluentui/web-components";
+// const app = document.querySelector<HTMLDivElement>("#app")!;
+const app = document.getElementById("app") as HTMLDivElement;
 
-<div class="ticks"></div>
+const textLabel = document.createElement("fluent-text") as Text;
+textLabel.textContent = "Fluent UI Weather App";
+textLabel.style.fontSize = "24px";
+textLabel.style.fontWeight = "bold";
+textLabel.style.marginBottom = "10px";
+// textLabel.size = "1000";
+app.appendChild(textLabel);
 
-<section id="next-steps">
-  <div id="docs">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#documentation-icon"></use></svg>
-    <h2>Documentation</h2>
-    <p>Your questions, answered</p>
-    <ul>
-      <li>
-        <a href="https://vite.dev/" target="_blank">
-          <img class="logo" src="${viteLogo}" alt="" />
-          Explore Vite
-        </a>
-      </li>
-      <li>
-        <a href="https://www.typescriptlang.org" target="_blank">
-          <img class="button-icon" src="${typescriptLogo}" alt="">
-          Learn more
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="social">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#social-icon"></use></svg>
-    <h2>Connect with us</h2>
-    <p>Join the Vite community</p>
-    <ul>
-      <li><a href="https://github.com/vitejs/vite" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#github-icon"></use></svg>GitHub</a></li>
-      <li><a href="https://chat.vite.dev/" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#discord-icon"></use></svg>Discord</a></li>
-      <li><a href="https://x.com/vite_js" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#x-icon"></use></svg>X.com</a></li>
-      <li><a href="https://bsky.app/profile/vite.dev" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#bluesky-icon"></use></svg>Bluesky</a></li>
-    </ul>
-  </div>
-</section>
+// Button experimentation:
+ButtonDefinition.define(FluentDesignSystem.registry);
+BadgeDefinition.define(FluentDesignSystem.registry);
+TextDefinition.define(FluentDesignSystem.registry);
+TextInputDefinition.define(FluentDesignSystem.registry);
 
-<div class="ticks"></div>
-<section id="spacer"></section>
-`
+const button1 = document.createElement("fluent-button");
+button1.setAttribute("appearance", "subtle");
+button1.textContent = "Click me";
+// document.querySelector<HTMLDivElement>("#app")!.appendChild(button1);
+app.appendChild(button1);
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+// Option 2 (better) use the typed property instead of setAttribute
+const button2 = document.createElement("fluent-button") as Button;
+button2.appearance = "primary";
+button2.textContent = "Hello Fluent!";
+// document.querySelector<HTMLDivElement>("#app")!.appendChild(button2);
+app.appendChild(button2);
+
+const badge = document.createElement("fluent-badge") as Badge;
+badge.textContent = "New";
+badge.style.marginLeft = "10px";
+app.appendChild(badge);
+
+const input = document.createElement("fluent-text-input") as TextInput;
+input.placeholder = "Search...";
+input.controlSize = "medium";
+input.appearance = "outline";
+// input.type = "search";
+app.appendChild(input);
+
+// Fetch weather data from OpenWeatherMap API
+// My key:
+// const apiKey = "730e2e036bdae4a91d271d73943798c9";
+
+const apiKey = "4d8fb5b93d4af21d66a2948710284366";
+// const city = input.value.trim();
+// const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+const inputFieldValue = input.value;
+console.log("Input field value:", inputFieldValue);
+
+// Fetch approach with .then() chaining
+/*fetch(apiUrl)
+  // Log the response object
+  // .then((response) => {
+  //   console.log("Response status:", response);
+  //   return response.json();
+  // })
+  .then((response) => response.json())
+  .then((data) => {
+    console.log("Weather data:", data);
+  });*/
+
+// Fetch approach with async/await
+async function fetchWeatherData(cityName: string) {
+  try {
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`;
+    const response = await fetch(apiUrl);
+    console.log("Response status:", response);
+    const weatherData = await response.json();
+    console.log("Weather data:", weatherData);
+
+    if (response.ok) {
+      // const weatherData = {
+      //   city: weatherData.name,
+      //   temperature: weatherData.main.temp,
+      //   description: weatherData.weather[0].description,
+      // };
+
+      // Destructuring the JSON response to extract relevant weather data
+      // const {
+      //   name: city,
+      //   main: { temp: temperature },
+      //   weather: [{ description }],
+      // } = weatherData;
+
+      // const { name: city, timezone } = weatherData;
+      const { main, name, sys, weather } = weatherData;
+
+      console.log("Weather data destructured:", main, name, sys, weather);
+
+      // Get an array of weather descriptions from the weather array
+      const weatherDescriptions = weather.map(
+        (weatherItem: any) => weatherItem.description,
+      );
+      console.log("Weather descriptions:", weatherDescriptions);
+
+      const weatherInfo = document.createElement("div");
+      const weatherText = document.createElement("fluent-text") as Text;
+      weatherText.textContent = `Weather in ${name}: ${main.temp}°C, ${weatherDescriptions.join(", ")}`;
+      weatherInfo.appendChild(weatherText);
+      app.appendChild(weatherInfo);
+    } else {
+      console.error("Error fetching weather data:", weatherData.message);
+    }
+  } catch (error) {
+    console.error("Error fetching weather data:", error);
+  }
+}
+
+// Event listener to fetch weather data when search is performed
+input.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    const cityName = input.value.trim();
+    fetchWeatherData(cityName);
+  }
+});
