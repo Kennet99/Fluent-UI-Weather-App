@@ -50,11 +50,16 @@ badge.style.marginLeft = "10px";
 app.appendChild(badge);
 
 const input = document.createElement("fluent-text-input") as TextInput;
-input.placeholder = "Search...";
-input.controlSize = "medium";
+input.placeholder = "Search for a city";
+input.controlSize = "large";
 input.appearance = "outline";
-// input.type = "search";
-app.appendChild(input);
+// app.appendChild(input);
+
+// const weatherCard = document.createElement("div");
+const weatherCard = document.getElementById("card") as HTMLDivElement;
+weatherCard.className = "card";
+app.appendChild(weatherCard);
+weatherCard.append(textLabel, input);
 
 // Fetch weather data from OpenWeatherMap API
 // My key:
@@ -66,6 +71,12 @@ const apiKey = "4d8fb5b93d4af21d66a2948710284366";
 
 const inputFieldValue = input.value;
 console.log("Input field value:", inputFieldValue);
+
+// const weatherInfo = document.createElement("div");
+const weatherText = document.createElement("fluent-text") as Text;
+weatherText.innerHTML = "";
+weatherCard.appendChild(weatherText);
+// app.appendChild(weatherInfo);
 
 // Fetch approach with .then() chaining
 /*fetch(apiUrl)
@@ -89,12 +100,6 @@ async function fetchWeatherData(cityName: string) {
     console.log("Weather data:", weatherData);
 
     if (response.ok) {
-      // const weatherData = {
-      //   city: weatherData.name,
-      //   temperature: weatherData.main.temp,
-      //   description: weatherData.weather[0].description,
-      // };
-
       // Destructuring the JSON response to extract relevant weather data
       // const {
       //   name: city,
@@ -111,13 +116,8 @@ async function fetchWeatherData(cityName: string) {
       const weatherDescriptions = weather.map(
         (weatherItem: any) => weatherItem.description,
       );
-      console.log("Weather descriptions:", weatherDescriptions);
-
-      const weatherInfo = document.createElement("div");
-      const weatherText = document.createElement("fluent-text") as Text;
       weatherText.textContent = `Weather in ${name}: ${main.temp}°C, ${weatherDescriptions.join(", ")}`;
-      weatherInfo.appendChild(weatherText);
-      app.appendChild(weatherInfo);
+      console.log("Weather descriptions:", weatherDescriptions);
     } else {
       console.error("Error fetching weather data:", weatherData.message);
     }
@@ -127,9 +127,10 @@ async function fetchWeatherData(cityName: string) {
 }
 
 // Event listener to fetch weather data when search is performed
-input.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
     const cityName = input.value.trim();
+    input.value = "";
     fetchWeatherData(cityName);
   }
 });
