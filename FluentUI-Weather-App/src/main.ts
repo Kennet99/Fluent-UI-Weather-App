@@ -15,11 +15,12 @@ import {
   TextInput,
   Text,
 } from "@fluentui/web-components";
-import { webLightTheme } from "@fluentui/tokens";
-// setTheme(webLightTheme);
 
+import { webLightTheme } from "@fluentui/tokens";
 import { createLightTheme } from "@fluentui/tokens";
 import type { BrandVariants } from "@fluentui/tokens";
+
+// setTheme(webLightTheme);
 
 const myBrand: BrandVariants = {
   10: "#060103",
@@ -29,7 +30,7 @@ const myBrand: BrandVariants = {
   50: "#721A3F",
   60: "#8B1D4C",
   70: "#A52059",
-  80: "#BF2367", // ← your primary color goes around here
+  80: "#BF2367",
   90: "#C93D77",
   100: "#D35787",
   110: "#DC6F98",
@@ -101,15 +102,13 @@ input.controlSize = "large";
 input.appearance = "outline";
 input.style.width = "100%";
 
-// const errorModal = document.createElement("fluent-dialog") as Dialog;
-// errorModal.type = "alert";
-
 const weatherCard = document.getElementById("card") as HTMLDivElement;
 weatherCard.className = "card";
 
-// My key:
-// const apiKey = "730e2e036bdae4a91d271d73943798c9";
-const apiKey = "4d8fb5b93d4af21d66a2948710284366";
+// YT video api key:
+// const apiKey = "4d8fb5b93d4af21d66a2948710284366";
+
+const apiKey = "730e2e036bdae4a91d271d73943798c9";
 const weatherText = document.createElement("fluent-text") as Text;
 weatherText.style.display = "none";
 weatherCard.append(
@@ -123,8 +122,7 @@ weatherCard.append(
 );
 app.appendChild(weatherCard);
 
-// Event listener to fetch weather data when search is performed
-input.addEventListener("keydown", async (e) => {
+input.addEventListener("keydown", async (e): Promise<void> => {
   const inputFieldValue = input.value.trim();
   const cityName = inputFieldValue;
   if (e.key === "Enter" && inputFieldValue !== "") {
@@ -134,8 +132,7 @@ input.addEventListener("keydown", async (e) => {
   }
 });
 
-// Fetch approach with async/await
-async function fetchWeatherData(cityName: string) {
+async function fetchWeatherData(cityName: string): Promise<void> {
   try {
     const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`;
 
@@ -158,7 +155,7 @@ async function fetchWeatherData(cityName: string) {
   }
 }
 
-function displayWeatherData(weatherData: any) {
+function displayWeatherData(weatherData: any): void {
   // Array destucturing where name is city, main is an object with temp and humidity, and weather is an array of objects with description and id
   const {
     name: city,
@@ -180,9 +177,6 @@ function displayWeatherData(weatherData: any) {
 
   cityLabel.style.display = "block";
   cityLabel.textContent = `Weather in ${city} • ${Math.round(temp)}°C`;
-
-  // temperatureLabel.style.display = "block";
-  // temperatureLabel.textContent = `${Math.round(temp)}°C`;
 
   descriptionLabel.style.display = "block";
   descriptionLabel.textContent = `${description}, Humidity: ${humidity}%`;
@@ -209,9 +203,8 @@ function getWeatherAssets(weatherID: number): string {
   }
 }
 
-function displayErrorMessage(message: string) {
+function displayErrorMessage(message: string): void {
   errorText.textContent = message;
   weatherText.textContent = "";
   weatherCard.appendChild(errorText);
-  return errorText;
 }
