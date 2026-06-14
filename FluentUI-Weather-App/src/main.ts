@@ -1,6 +1,5 @@
-import "./style.css";
 // cspell:disable-next-line
-// Import fluent UI web components
+import "./style.css";
 import "@fluentui/web-components/button.js";
 import {
   FluentDesignSystem,
@@ -9,128 +8,210 @@ import {
   ButtonDefinition,
   BadgeDefinition,
   TextInputDefinition,
+  LabelDefinition,
+  ImageDefinition,
+  DialogDefinition,
+  Label,
+  TextInput,
+  Text,
 } from "@fluentui/web-components";
 import { webLightTheme } from "@fluentui/tokens";
-setTheme(webLightTheme);
+// setTheme(webLightTheme);
 
-import { Button, Badge, TextInput, Text } from "@fluentui/web-components";
-// const app = document.querySelector<HTMLDivElement>("#app")!;
-const app = document.getElementById("app") as HTMLDivElement;
+import { createLightTheme } from "@fluentui/tokens";
+import type { BrandVariants } from "@fluentui/tokens";
 
-const textLabel = document.createElement("fluent-text") as Text;
-textLabel.textContent = "Fluent UI Weather App";
-textLabel.style.fontSize = "24px";
-textLabel.style.fontWeight = "bold";
-textLabel.style.marginBottom = "10px";
-// textLabel.size = "1000";
-app.appendChild(textLabel);
+const myBrand: BrandVariants = {
+  10: "#060103",
+  20: "#271018",
+  30: "#431426",
+  40: "#591732",
+  50: "#721A3F",
+  60: "#8B1D4C",
+  70: "#A52059",
+  80: "#BF2367", // ← your primary color goes around here
+  90: "#C93D77",
+  100: "#D35787",
+  110: "#DC6F98",
+  120: "#E487A9",
+  130: "#EC9FBA",
+  140: "#F3B7CB",
+  150: "#F8CFDC",
+  160: "#FDE7ED",
+};
 
-// Button experimentation:
+const myTheme = createLightTheme(myBrand);
+setTheme(myTheme);
+
+import stormImg from "./images/icon-storm.webp";
+import drizzleImg from "./images/icon-drizzle.webp";
+import rainImg from "./images/icon-rain.webp";
+import snowImg from "./images/icon-snow.webp";
+import fogImg from "./images/icon-fog.webp";
+import clearImg from "./images/icon-partly-cloudy.webp";
+import cloudsImg from "./images/icon-overcast.webp";
+import imgError from "./images/icon-error.svg";
+
 ButtonDefinition.define(FluentDesignSystem.registry);
 BadgeDefinition.define(FluentDesignSystem.registry);
 TextDefinition.define(FluentDesignSystem.registry);
 TextInputDefinition.define(FluentDesignSystem.registry);
+LabelDefinition.define(FluentDesignSystem.registry);
+ImageDefinition.define(FluentDesignSystem.registry);
+DialogDefinition.define(FluentDesignSystem.registry);
 
-const button1 = document.createElement("fluent-button");
-button1.setAttribute("appearance", "subtle");
-button1.textContent = "Click me";
-// document.querySelector<HTMLDivElement>("#app")!.appendChild(button1);
-app.appendChild(button1);
+const app = document.getElementById("app") as HTMLDivElement;
 
-// Option 2 (better) use the typed property instead of setAttribute
-const button2 = document.createElement("fluent-button") as Button;
-button2.appearance = "primary";
-button2.textContent = "Hello Fluent!";
-// document.querySelector<HTMLDivElement>("#app")!.appendChild(button2);
-app.appendChild(button2);
+const textLabel = document.createElement("fluent-label") as Label;
+textLabel.textContent = "Fluent UI Weather App";
+textLabel.style.fontSize = "24px";
+textLabel.style.fontWeight = "bold";
+textLabel.style.marginBottom = "8px";
 
-const badge = document.createElement("fluent-badge") as Badge;
-badge.textContent = "New";
-badge.style.marginLeft = "10px";
-app.appendChild(badge);
+const errorText = document.createElement("fluent-label") as Label;
+errorText.size = "large";
+errorText.weight = "semibold";
+errorText.style.color = "red";
+
+const cityLabel = document.createElement("fluent-label") as Label;
+cityLabel.style.display = "none";
+cityLabel.style.color = myBrand[80];
+cityLabel.size = "large";
+cityLabel.weight = "semibold";
+
+const temperatureLabel = document.createElement("fluent-label") as Label;
+temperatureLabel.style.display = "none";
+temperatureLabel.size = "medium";
+temperatureLabel.weight = "semibold";
+
+const descriptionLabel = document.createElement("fluent-label") as Label;
+descriptionLabel.style.display = "none";
+descriptionLabel.size = "medium";
+descriptionLabel.weight = "regular";
+
+const weatherImage = document.createElement("img") as HTMLImageElement;
+weatherImage.style.display = "none";
+weatherImage.style.width = "100px";
+weatherImage.style.height = "100px";
+weatherImage.style.objectFit = "cover";
 
 const input = document.createElement("fluent-text-input") as TextInput;
 input.placeholder = "Search for a city";
 input.controlSize = "large";
 input.appearance = "outline";
-// app.appendChild(input);
+input.style.width = "100%";
 
-// const weatherCard = document.createElement("div");
+// const errorModal = document.createElement("fluent-dialog") as Dialog;
+// errorModal.type = "alert";
+
 const weatherCard = document.getElementById("card") as HTMLDivElement;
 weatherCard.className = "card";
-app.appendChild(weatherCard);
-weatherCard.append(textLabel, input);
 
-// Fetch weather data from OpenWeatherMap API
 // My key:
 // const apiKey = "730e2e036bdae4a91d271d73943798c9";
-
 const apiKey = "4d8fb5b93d4af21d66a2948710284366";
-// const city = input.value.trim();
-// const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-
-const inputFieldValue = input.value;
-console.log("Input field value:", inputFieldValue);
-
-// const weatherInfo = document.createElement("div");
 const weatherText = document.createElement("fluent-text") as Text;
-weatherText.innerHTML = "";
-weatherCard.appendChild(weatherText);
-// app.appendChild(weatherInfo);
+weatherText.style.display = "none";
+weatherCard.append(
+  textLabel,
+  input,
+  weatherImage,
+  cityLabel,
+  temperatureLabel,
+  descriptionLabel,
+  weatherText,
+);
+app.appendChild(weatherCard);
 
-// Fetch approach with .then() chaining
-/*fetch(apiUrl)
-  // Log the response object
-  // .then((response) => {
-  //   console.log("Response status:", response);
-  //   return response.json();
-  // })
-  .then((response) => response.json())
-  .then((data) => {
-    console.log("Weather data:", data);
-  });*/
+// Event listener to fetch weather data when search is performed
+input.addEventListener("keydown", async (e) => {
+  const inputFieldValue = input.value.trim();
+  const cityName = inputFieldValue;
+  if (e.key === "Enter" && inputFieldValue !== "") {
+    console.log("Input field value:", inputFieldValue);
+    input.value = "";
+    await fetchWeatherData(cityName);
+  }
+});
 
 // Fetch approach with async/await
 async function fetchWeatherData(cityName: string) {
   try {
     const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`;
+
     const response = await fetch(apiUrl);
     console.log("Response status:", response);
+
     const weatherData = await response.json();
     console.log("Weather data:", weatherData);
 
-    if (response.ok) {
-      // Destructuring the JSON response to extract relevant weather data
-      // const {
-      //   name: city,
-      //   main: { temp: temperature },
-      //   weather: [{ description }],
-      // } = weatherData;
-
-      // const { name: city, timezone } = weatherData;
-      const { main, name, sys, weather } = weatherData;
-
-      console.log("Weather data destructured:", main, name, sys, weather);
-
-      // Get an array of weather descriptions from the weather array
-      const weatherDescriptions = weather.map(
-        (weatherItem: any) => weatherItem.description,
-      );
-      weatherText.textContent = `Weather in ${name}: ${main.temp}°C, ${weatherDescriptions.join(", ")}`;
-      console.log("Weather descriptions:", weatherDescriptions);
-    } else {
+    if (!response.ok && !cityName) {
       console.error("Error fetching weather data:", weatherData.message);
+      displayErrorMessage("Error fetching weather data. Please try again.");
+    } else {
+      displayWeatherData(weatherData);
+      errorText.remove();
     }
   } catch (error) {
     console.error("Error fetching weather data:", error);
+    displayErrorMessage("Error fetching weather data. Please try again.");
   }
 }
 
-// Event listener to fetch weather data when search is performed
-input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    const cityName = input.value.trim();
-    input.value = "";
-    fetchWeatherData(cityName);
+function displayWeatherData(weatherData: any) {
+  // Array destucturing where name is city, main is an object with temp and humidity, and weather is an array of objects with description and id
+  const {
+    name: city,
+    main: { temp, humidity },
+    weather: [{ description, id }],
+  } = weatherData;
+  console.log(
+    "Weather data destructured:",
+    temp,
+    humidity,
+    description,
+    id,
+    city,
+  );
+
+  weatherImage.style.display = "block";
+  weatherImage.src = getWeatherAssets(id);
+  // weatherText.style.display = "flex";
+
+  cityLabel.style.display = "block";
+  cityLabel.textContent = `Weather in ${city} • ${Math.round(temp)}°C`;
+
+  // temperatureLabel.style.display = "block";
+  // temperatureLabel.textContent = `${Math.round(temp)}°C`;
+
+  descriptionLabel.style.display = "block";
+  descriptionLabel.textContent = `${description}, Humidity: ${humidity}%`;
+}
+
+function getWeatherAssets(weatherID: number): string {
+  switch (true) {
+    case weatherID >= 200 && weatherID < 300:
+      return stormImg;
+    case weatherID >= 300 && weatherID < 500:
+      return drizzleImg;
+    case weatherID >= 500 && weatherID < 600:
+      return rainImg;
+    case weatherID >= 600 && weatherID < 700:
+      return snowImg;
+    case weatherID >= 700 && weatherID < 800:
+      return fogImg;
+    case weatherID === 800:
+      return clearImg;
+    case weatherID > 800 && weatherID < 900:
+      return cloudsImg;
+    default:
+      return imgError;
   }
-});
+}
+
+function displayErrorMessage(message: string) {
+  errorText.textContent = message;
+  weatherText.textContent = "";
+  weatherCard.appendChild(errorText);
+  return errorText;
+}
