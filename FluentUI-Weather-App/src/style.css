@@ -40,3 +40,7 @@
   border-radius: 0.5rem;
   box-shadow: var(--shadow);
 }
+
+.badgeVisibility {
+  display: none;
+}

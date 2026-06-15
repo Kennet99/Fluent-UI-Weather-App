@@ -47,11 +47,6 @@ button2.textContent = "Hello Fluent!";
 // document.querySelector<HTMLDivElement>("#app")!.appendChild(button2);
 app.appendChild(button2);
 
-const badge = document.createElement("fluent-badge") as Badge;
-badge.textContent = "New";
-badge.style.marginLeft = "10px";
-app.appendChild(badge);
-
 // const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
 // Fetch approach with .then() chaining

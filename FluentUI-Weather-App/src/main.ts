@@ -14,6 +14,8 @@ import {
   Label,
   TextInput,
   Text,
+  Badge,
+  Button,
 } from "@fluentui/web-components";
 
 import { webLightTheme } from "@fluentui/tokens";
@@ -122,7 +124,7 @@ weatherCard.append(
 );
 app.appendChild(weatherCard);
 
-input.addEventListener("keydown", async (e): Promise<void> => {
+input.addEventListener("keydown", async (e: KeyboardEvent): Promise<void> => {
   const inputFieldValue = input.value.trim();
   const cityName = inputFieldValue;
   if (e.key === "Enter" && inputFieldValue !== "") {
